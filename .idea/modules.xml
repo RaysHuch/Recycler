@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Recycler.iml" filepath="$PROJECT_DIR$/Recycler.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/recyclerlib/recyclerlib.iml" filepath="$PROJECT_DIR$/recyclerlib/recyclerlib.iml" />
     </modules>
   </component>
 </project>

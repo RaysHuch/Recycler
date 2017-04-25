@@ -1,8 +1,6 @@
-package com.hu.recycler.adapter.factory;
+package com.hu.recyclerlib.adapter.factory;
 
 import java.lang.reflect.InvocationTargetException;
-
-import com.hu.recycler.ViewItemState;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView.ViewHolder;
@@ -19,7 +17,7 @@ public abstract class AbsViewHolderFactory {
 	/**
 	 * 创建ViewHolder
 	 * @param context
-	 * @param itemType 每个Item的类型 见 {@link com.hu.recycler.ViewItemState}
+	 * @param itemType 每个Item的类型
 	 * @return
 	 * @throws ClassNotFoundException
 	 * @throws NoSuchMethodException

@@ -1,4 +1,4 @@
-package com.hu.recycler.bean.itemtype;
+package com.hu.recyclerlib.itemtype;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

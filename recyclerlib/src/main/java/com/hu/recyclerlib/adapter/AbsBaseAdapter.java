@@ -1,10 +1,10 @@
-package com.hu.recycler.adapter;
+package com.hu.recyclerlib.adapter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import com.hu.recycler.adapter.factory.AbsViewHolderFactory;
-import com.hu.recycler.bean.itemtype.ItemType;
+import com.hu.recyclerlib.adapter.factory.AbsViewHolderFactory;
+import com.hu.recyclerlib.itemtype.ItemType;
 import com.hu.recycler.viewholder.FooterViewHolder;
 
 import android.support.annotation.NonNull;

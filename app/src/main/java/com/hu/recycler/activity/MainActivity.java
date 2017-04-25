@@ -7,8 +7,8 @@ import android.support.v7.widget.RecyclerView;
 
 import com.hu.recycler.R;
 import com.hu.recycler.ViewItemState;
-import com.hu.recycler.adapter.AbsBaseAdapter;
-import com.hu.recycler.adapter.factory.AbsViewHolderFactory;
+import com.hu.recyclerlib.adapter.AbsBaseAdapter;
+import com.hu.recyclerlib.adapter.factory.AbsViewHolderFactory;
 import com.hu.recycler.bean.DemoBean;
 import com.hu.recycler.bean.DemoBean2;
 import com.hu.recycler.viewholder.DemoViewHolder;

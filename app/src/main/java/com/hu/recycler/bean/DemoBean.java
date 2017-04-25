@@ -1,6 +1,6 @@
 package com.hu.recycler.bean;
 
-import com.hu.recycler.bean.itemtype.ItemType;
+import com.hu.recyclerlib.itemtype.ItemType;
 
 @ItemType(0)
 public class DemoBean{
