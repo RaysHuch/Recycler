@@ -8,6 +8,7 @@ import com.hu.recyclerlib.itemtype.ItemType;
 import com.hu.recyclerlib.viewholder.FooterViewHolder;
 
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
@@ -17,81 +18,113 @@ import android.view.ViewGroup;
  * 基与RecyclerView.Adapter的BaseAdapter。<br/>
  * 其中泛型T，当已知的T类型是相同的类型，可直接将类型传入， 当类型不确定，需使用Object类型，
  * 之后根据需要强制类型转换
+ *
+ * @param <T>
+ * @param <T> Bean
  * @author hch
- * @param <T>
  * @date 2015年11月23日
- * @param <T>
- *            Bean
  */
-public abstract class AbsBaseAdapter<T extends Object> extends Adapter<ViewHolder> {
+public abstract class AbsBaseAdapter<T extends Object> extends Adapter<ViewHolder> implements View.OnClickListener, View.OnLongClickListener {
 
-	private List<T> list;
-	AbsViewHolderFactory factory;
+    private final RecyclerView recyclerView;
+    private List<T> list;
+    private AbsViewHolderFactory factory;
+    private OnItemClickListener onItemClickListener;
+    private OnItemLongClickListener onItemLongClickListener;
 
-	/**
-	 * 构造器
-	 * 
-	 * @param list
-	 *            数据的list
-	 * @param factory
-	 *            ViewHolder的工厂类
-	 */
-	public AbsBaseAdapter(@NonNull List<T> list, @NonNull AbsViewHolderFactory factory) {
-		this.list = list;
-		this.factory = factory;
-	}
+    /**
+     * 构造器
+     *
+     * @param list    数据的list
+     * @param factory ViewHolder的工厂类
+     */
+    public AbsBaseAdapter(@NonNull List<T> list, @NonNull AbsViewHolderFactory factory, RecyclerView recyclerView) {
+        this.list = list;
+        this.factory = factory;
+        this.recyclerView = recyclerView;
+    }
 
-	/**
-	 * 为了添加加载更多,item数量要加1
-	 */
-	@Override
-	public int getItemCount() {
-		return list.size();
-	}
+    /**
+     * 为了添加加载更多,item数量要加1
+     */
+    @Override
+    public int getItemCount() {
+        return list.size();
+    }
 
-	@Override
-	public int getItemViewType(int position) {
-		return list.get(position).getClass().getAnnotation(ItemType.class).value();
-	}
+    @Override
+    public int getItemViewType(int position) {
+        return list.get(position).getClass().getAnnotation(ItemType.class).value();
+    }
 
-	@Override
-	public void onBindViewHolder(ViewHolder viewHolder, int position) {
-		if (viewHolder != null) {
-			if (FooterViewHolder.class.getName().equals(viewHolder.getClass().getName())) {
-				if (list.size() < 10) {
-					((FooterViewHolder) viewHolder).rlFooter.setVisibility(View.GONE);
-				} else {
-					((FooterViewHolder) viewHolder).llLoading.setVisibility(View.GONE);
-					((FooterViewHolder) viewHolder).tvTips.setVisibility(View.VISIBLE);
-				}
-			} else {
-				bindViewHolders(viewHolder, list.get(position), position);
-			}
-		}
-	}
+    @Override
+    public void onBindViewHolder(ViewHolder viewHolder, int position) {
+        if (viewHolder != null) {
+            if (FooterViewHolder.class.getName().equals(viewHolder.getClass().getName())) {
+                if (list.size() < 10) {
+                    ((FooterViewHolder) viewHolder).rlFooter.setVisibility(View.GONE);
+                } else {
+                    ((FooterViewHolder) viewHolder).llLoading.setVisibility(View.GONE);
+                    ((FooterViewHolder) viewHolder).tvTips.setVisibility(View.VISIBLE);
+                }
+            } else {
+                bindViewHolders(viewHolder, list.get(position), position);
+                if (onItemClickListener != null) {
+                    viewHolder.itemView.setOnClickListener(this);
+                }
+                if (onItemLongClickListener != null) {
+                    viewHolder.itemView.setOnLongClickListener(this);
+                }
+            }
+        }
+    }
 
-	/**
-	 * 绑定ViewHolder
-	 * 
-	 * @param viewHolder
-	 *            对应的ViewHolder
-	 * @param bean
-	 *            数据
-	 * @param position
-	 *            位置
-	 */
-	public abstract void bindViewHolders(ViewHolder viewHolder, T bean, int position);
+    /**
+     * 绑定ViewHolder
+     *
+     * @param viewHolder 对应的ViewHolder
+     * @param bean       数据
+     * @param position   位置
+     */
+    public abstract void bindViewHolders(ViewHolder viewHolder, T bean, int position);
 
-	@Override
-	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		try {
-			return factory.createViewHolder(parent.getContext(), viewType);
-		} catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
-				| IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        try {
+            return factory.createViewHolder(parent.getContext(), viewType);
+        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+                | IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
+    @Override
+    public void onClick(View v) {
+        if (onItemClickListener != null) {
+            onItemClickListener.onItemClick(recyclerView.getChildAdapterPosition(v), v);
+        }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        return onItemLongClickListener != null && onItemLongClickListener.onItemLongClick(recyclerView.getChildAdapterPosition(v), v);
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(int position, View view);
+    }
+
+    public interface OnItemLongClickListener {
+        boolean onItemLongClick(int position, View view);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
+        this.onItemLongClickListener = onItemLongClickListener;
+    }
 }

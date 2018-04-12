@@ -4,6 +4,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.Toast;
 
 import com.hu.recycler.R;
 import com.hu.recycler.ViewItemState;
@@ -20,6 +22,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     protected static final String TAG = "MyActivity";
     RecyclerView rvListView;
+    AbsBaseAdapter absBaseAdapter;
     int layoutId;
     String viewHolderName;
     List<Object> myBeans = new ArrayList<>();
@@ -38,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
             myBeans.add(new DemoBean2("title:" + i, "second:" + i, "btn:" + i));
         }
 
-        rvListView.setAdapter(new AbsBaseAdapter<Object>(myBeans, new SimpleFactory()) {
+        rvListView.setAdapter(absBaseAdapter =new AbsBaseAdapter<Object>(myBeans, new SimpleFactory(),rvListView) {
             @Override
             public void bindViewHolders(RecyclerView.ViewHolder viewHolder, Object bean, int position) {
                 System.out.println(viewHolder.getClass().getName());
@@ -53,6 +56,19 @@ public class MainActivity extends AppCompatActivity {
                     demoViewHolder2.textView2.setText(((DemoBean2) bean).text2);
                     demoViewHolder2.button1.setText(((DemoBean2) bean).btnText);
                 }
+            }
+        });
+        absBaseAdapter.setOnItemClickListener(new AbsBaseAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position, View view) {
+                Toast.makeText(MainActivity.this, "点击了第"+position+"个view", Toast.LENGTH_SHORT).show();
+            }
+        });
+        absBaseAdapter.setOnItemLongClickListener(new AbsBaseAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(int position, View view) {
+                Toast.makeText(MainActivity.this, "长按点击了第"+position+"个view", Toast.LENGTH_SHORT).show();
+                return false;
             }
         });
     }
