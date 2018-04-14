@@ -3,12 +3,14 @@ package com.hu.recycler.activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
 import com.hu.recycler.R;
 import com.hu.recycler.ViewItemState;
+import com.hu.recycler.activity.recycler.StartSnapHelper;
 import com.hu.recyclerlib.adapter.AbsBaseAdapter;
 import com.hu.recyclerlib.adapter.factory.AbsViewHolderFactory;
 import com.hu.recycler.bean.DemoBean;
@@ -31,17 +33,34 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        LinearLayoutManager layoutManager = new LoopLayoutManager(this);
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
         rvListView = (RecyclerView) findViewById(R.id.rvListView);
         rvListView.setHasFixedSize(true);
         rvListView.setLayoutManager(layoutManager);
-        for (int i = 0; i < 100; i++) {
+        LinearSnapHelper linearSnapHelper = new StartSnapHelper();
+        linearSnapHelper.attachToRecyclerView(rvListView);
+        for (int i = 0; i < 105; i++) {
             myBeans.add(new DemoBean("title:" + i, "second:" + i, "btn:" + i));
             myBeans.add(new DemoBean2("title:" + i, "second:" + i, "btn:" + i));
         }
 
-        rvListView.setAdapter(absBaseAdapter =new AbsBaseAdapter<Object>(myBeans, new SimpleFactory(),rvListView) {
+        rvListView.setAdapter(absBaseAdapter = new AbsBaseAdapter<Object>(myBeans, new SimpleFactory(), rvListView) {
+            @Override
+            public int getItemCount() {
+                return super.getItemCount()*2;
+            }
+
+            @Override
+            public int getItemViewType(int position) {
+                return super.getItemViewType(position % myBeans.size());
+            }
+
+            @Override
+            public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+                super.onBindViewHolder(viewHolder, position % myBeans.size());
+            }
+
             @Override
             public void bindViewHolders(RecyclerView.ViewHolder viewHolder, Object bean, int position) {
                 System.out.println(viewHolder.getClass().getName());
@@ -61,13 +80,14 @@ public class MainActivity extends AppCompatActivity {
         absBaseAdapter.setOnItemClickListener(new AbsBaseAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position, View view) {
-                Toast.makeText(MainActivity.this, "点击了第"+position+"个view", Toast.LENGTH_SHORT).show();
+                rvListView.smoothScrollToPosition(position);
+                Toast.makeText(MainActivity.this, "点击了第" + position + "个view", Toast.LENGTH_SHORT).show();
             }
         });
         absBaseAdapter.setOnItemLongClickListener(new AbsBaseAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(int position, View view) {
-                Toast.makeText(MainActivity.this, "长按点击了第"+position+"个view", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "长按点击了第" + position + "个view", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });

@@ -3,14 +3,17 @@ package com.hu.recyclerlib.adapter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import com.hu.recyclerlib.R;
 import com.hu.recyclerlib.adapter.factory.AbsViewHolderFactory;
 import com.hu.recyclerlib.itemtype.ItemType;
 import com.hu.recyclerlib.viewholder.FooterViewHolder;
+import com.hu.recyclerlib.viewholder.NoneViewHolder;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -27,10 +30,10 @@ import android.view.ViewGroup;
 public abstract class AbsBaseAdapter<T extends Object> extends Adapter<ViewHolder> implements View.OnClickListener, View.OnLongClickListener {
 
     private final RecyclerView recyclerView;
-    private List<T> list;
+    List<T> list;
     private AbsViewHolderFactory factory;
-    private OnItemClickListener onItemClickListener;
-    private OnItemLongClickListener onItemLongClickListener;
+    OnItemClickListener onItemClickListener;
+    OnItemLongClickListener onItemLongClickListener;
 
     /**
      * 构造器
@@ -59,23 +62,12 @@ public abstract class AbsBaseAdapter<T extends Object> extends Adapter<ViewHolde
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        if (viewHolder != null) {
-            if (FooterViewHolder.class.getName().equals(viewHolder.getClass().getName())) {
-                if (list.size() < 10) {
-                    ((FooterViewHolder) viewHolder).rlFooter.setVisibility(View.GONE);
-                } else {
-                    ((FooterViewHolder) viewHolder).llLoading.setVisibility(View.GONE);
-                    ((FooterViewHolder) viewHolder).tvTips.setVisibility(View.VISIBLE);
-                }
-            } else {
-                bindViewHolders(viewHolder, list.get(position), position);
-                if (onItemClickListener != null) {
-                    viewHolder.itemView.setOnClickListener(this);
-                }
-                if (onItemLongClickListener != null) {
-                    viewHolder.itemView.setOnLongClickListener(this);
-                }
-            }
+        bindViewHolders(viewHolder, list.get(position), position);
+        if (onItemClickListener != null) {
+            viewHolder.itemView.setOnClickListener(this);
+        }
+        if (onItemLongClickListener != null) {
+            viewHolder.itemView.setOnLongClickListener(this);
         }
     }
 
@@ -88,8 +80,9 @@ public abstract class AbsBaseAdapter<T extends Object> extends Adapter<ViewHolde
      */
     public abstract void bindViewHolders(ViewHolder viewHolder, T bean, int position);
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         try {
             return factory.createViewHolder(parent.getContext(), viewType);
         } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
@@ -97,7 +90,7 @@ public abstract class AbsBaseAdapter<T extends Object> extends Adapter<ViewHolde
                 | InvocationTargetException e) {
             e.printStackTrace();
         }
-        return null;
+        return new NoneViewHolder(LayoutInflater.from(recyclerView.getContext()).inflate(R.layout.layout_listview_none, null));
     }
 
     @Override

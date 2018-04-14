@@ -3,6 +3,8 @@ package com.hu.recyclerlib.adapter.factory;
 import java.lang.reflect.InvocationTargetException;
 
 import android.content.Context;
+import android.support.annotation.IdRes;
+import android.support.annotation.LayoutRes;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,9 +34,18 @@ public abstract class AbsViewHolderFactory {
 		View view = LayoutInflater.from(context).inflate(getLayoutId(itemType), null);
 		view.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.WRAP_CONTENT));
-		ViewHolder viewHolder = getViewHolder(itemType).getConstructor(View.class)
+		return getViewHolder(itemType).getConstructor(View.class)
 				.newInstance(view);
-		return viewHolder;
+	}
+
+	public final ViewHolder createViewHolder(Context context,Class<? extends ViewHolder> viewholderClass,@LayoutRes int layoutId)
+			throws NoSuchMethodException, InstantiationException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		View view = LayoutInflater.from(context).inflate(layoutId, null);
+		view.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
+				LayoutParams.WRAP_CONTENT));
+		return viewholderClass.getConstructor(View.class)
+				.newInstance(view);
 	}
 
 	/**
