@@ -130,6 +130,7 @@ public abstract class ViewPagerLayoutManager extends LinearLayoutManager {
     private View currentFocusView;
     private int layoutDirection;
     private int mScrollingOffset = 0;
+    private boolean viewInCenter = true;
 
     /**
      * @return the mInterval of each item's mOffset
@@ -832,15 +833,21 @@ public abstract class ViewPagerLayoutManager extends LinearLayoutManager {
         final int left = calItemLeft(scrap, targetOffset);
         final int top = calItemTop(scrap, targetOffset);
         if (mOrientation == VERTICAL) {
-            layoutDecorated(scrap, mSpaceInOther + left, mSpaceMain + top,
-                    mSpaceInOther + left + mDecoratedMeasurementInOther, mSpaceMain + top + mDecoratedMeasurement);
-            layoutDecorated(scrap, left, top,
-                    left + mDecoratedMeasurementInOther, top + mDecoratedMeasurement);
+            if (viewInCenter) {
+                layoutDecorated(scrap, mSpaceInOther + left, mSpaceMain + top,
+                        mSpaceInOther + left + mDecoratedMeasurementInOther, mSpaceMain + top + mDecoratedMeasurement);
+            } else {
+                layoutDecorated(scrap, left, top,
+                        left + mDecoratedMeasurementInOther, top + mDecoratedMeasurement);
+            }
         } else {
-//            layoutDecorated(scrap, mSpaceMain + left, mSpaceInOther + top,
-//                    mSpaceMain + left + mDecoratedMeasurement, mSpaceInOther + top + mDecoratedMeasurementInOther);
-            layoutDecorated(scrap, left, top,
-                    left + mDecoratedMeasurement, top + mDecoratedMeasurementInOther);
+            if (viewInCenter) {
+                layoutDecorated(scrap, mSpaceMain + left, mSpaceInOther + top,
+                        mSpaceMain + left + mDecoratedMeasurement, mSpaceInOther + top + mDecoratedMeasurementInOther);
+            }else {
+                layoutDecorated(scrap, left, top,
+                        left + mDecoratedMeasurement, top + mDecoratedMeasurementInOther);
+            }
         }
         setItemViewProperty(scrap, targetOffset);
     }
@@ -930,6 +937,7 @@ public abstract class ViewPagerLayoutManager extends LinearLayoutManager {
                     mOffset;
     }
 
+
     /**
      * used by {@link CenterSnapHelper} to center the current view
      *
@@ -961,6 +969,16 @@ public abstract class ViewPagerLayoutManager extends LinearLayoutManager {
             return;
         }
         mInfinite = enable;
+        requestLayout();
+    }
+
+
+    public void setViewInCenter(boolean viewInCenter) {
+        assertNotInLayoutOrScroll(null);
+        if (this.viewInCenter == viewInCenter) {
+            return;
+        }
+        this.viewInCenter = viewInCenter;
         requestLayout();
     }
 

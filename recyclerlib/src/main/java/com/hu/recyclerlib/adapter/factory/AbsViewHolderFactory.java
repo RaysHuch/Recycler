@@ -32,8 +32,6 @@ public abstract class AbsViewHolderFactory {
 			throws ClassNotFoundException, NoSuchMethodException, InstantiationException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		View view = LayoutInflater.from(context).inflate(getLayoutId(itemType), null);
-		view.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.WRAP_CONTENT));
 		return getViewHolder(itemType).getConstructor(View.class)
 				.newInstance(view);
 	}
@@ -42,8 +40,6 @@ public abstract class AbsViewHolderFactory {
 			throws NoSuchMethodException, InstantiationException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		View view = LayoutInflater.from(context).inflate(layoutId, null);
-		view.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.WRAP_CONTENT));
 		return viewholderClass.getConstructor(View.class)
 				.newInstance(view);
 	}
