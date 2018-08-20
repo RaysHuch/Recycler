@@ -84,13 +84,13 @@ public abstract class AbsBaseAdapter<T extends Object> extends Adapter<ViewHolde
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         try {
-            return factory.createViewHolder(parent.getContext(), viewType);
+            return factory.createViewHolder(parent.getContext(), parent, viewType);
         } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
                 | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
             e.printStackTrace();
         }
-        return new NoneViewHolder(LayoutInflater.from(recyclerView.getContext()).inflate(R.layout.layout_listview_none, null));
+        return new NoneViewHolder(LayoutInflater.from(recyclerView.getContext()).inflate(R.layout.layout_listview_none, parent, false));
     }
 
     @Override

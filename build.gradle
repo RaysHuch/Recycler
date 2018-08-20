@@ -19,6 +19,7 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+
         google()
         maven{url 'https://dl.bintray.com/rayshu/recyclerlib/'}
     }
@@ -29,6 +30,6 @@ task clean(type: Delete) {
 }
 
 ext {
-    versionCode = 2
-    versionName = "1.0.4"
+    versionCode = 3
+    versionName = "1.0.5"
 }
